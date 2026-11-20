@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Earth Missions: Plate Tectonics Adventure</title>
+
+<style>
+body{
+    margin:0;
+    font-family:Arial, sans-serif;
+    background:#0d1b2a;
+    color:white;
+}
+
+header{
+    background:#14213d;
+    padding:15px;
+    text-align:center;
+    border-bottom:3px solid #fca311;
+}
+
+#game{
+    display:flex;
+    flex-wrap:wrap;
+}
+
+#map{
+    flex:1;
+    min-width:300px;
+    padding:20px;
+}
+
+#panel{
+    flex:1;
+    min-width:350px;
+    padding:20px;
+    background:#1b263b;
+}
+
+.locationBtn{
+    display:block;
+    width:100%;
+    margin:10px 0;
+    padding:15px;
+    border:none;
+    border-radius:10px;
+    cursor:pointer;
+    font-size:18px;
+    font-weight:bold;
+    background:#415a77;
+    color:white;
+}
+
+.locationBtn:hover{
+    background:#778da9;
+}
+
+.question{
+    margin-top:15px;
+}
+
+.choice{
+    display:block;
+    margin:8px 0;
+    width:100%;
+    padding:10px;
+    border:none;
+    border-radius:8px;
+    background:#778da9;
+    color:white;
+    cursor:pointer;
+}
+
+.choice:hover{
+    background:#a9bcd0;
+    color:black;
+}
+
+#message{
+    margin-top:15px;
+    font-size:18px;
+    min-height:50px;
+}
+
+#xpBarOuter{
+    background:#333;
+    height:25px;
+    border-radius:20px;
+    overflow:hidden;
+    margin-top:10px;
+}
+
+#xpBar{
+    width:0%;
+    height:100%;
+    background:limegreen;
+}
+
+.badge{
+    display:inline-block;
+    background:gold;
+    color:black;
+    padding:6px 12px;
+    margin:4px;
+    border-radius:20px;
+    font-weight:bold;
+}
+
+#animation{
+    height:180px;
+    margin-top:10px;
+    position:relative;
+    overflow:hidden;
+    border:2px solid white;
+    border-radius:10px;
+}
+
+.plate{
+    position:absolute;
+    top:50px;
+    width:120px;
+    height:60px;
+    background:saddlebrown;
+}
+
+#leftPlate{
+    left:40px;
+}
+
+#rightPlate{
+    right:40px;
+}
+
+#volcano{
+    font-size:60px;
+    text-align:center;
+    display:none;
+    margin-top:30px;
+}
+
+#earthquake{
+    font-size:70px;
+    text-align:center;
+    display:none;
+    margin-top:20px;
+}
+
+.success{
+    color:#7CFC00;
+}
+
+.fail{
+    color:#ff6b6b;
+}
+
+#finalMission{
+    display:none;
+}
+
+footer{
+    text-align:center;
+    padding:15px;
+    background:#14213d;
+}
+
+@keyframes shake{
+  0% { transform:translate(2px,2px);}
+  25% { transform:translate(-2px,0px);}
+  50% { transform:translate(2px,-2px);}
+  75% { transform:translate(-2px,2px);}
+  100% { transform:translate(2px,2px);}
+}
+
+.shaking{
+    animation:shake .2s infinite;
+}
+</style>
+</head>
+<body>
+
+<header>
+<h1>🌎 EARTH MISSIONS: PLATE TECTONICS ADVENTURE 🌎</h1>
+<p>Become a Master Geologist and save Earth!</p>
+
+<div>
+XP: <span id="xp">0</span>/100
+</div>
+
+<div id="xpBarOuter">
+<div id="xpBar"></div>
+</div>
+</header>
+
+<div id="game">
+
+<div id="map">
+
+<button class="locationBtn" onclick="visit('rift')">
+🌊 Rift Zone (Divergent)
+</button>
+
+<button class="locationBtn" onclick="visit('subduction')">
+🌋 Subduction Zone (Convergent)
+</button>
+
+<button class="locationBtn" onclick="visit('fault')">
+⚡ Fault Line (Transform)
+</button>
+
+<button class="locationBtn" onclick="visit('fossil')">
+🦴 Fossil Research Center
+</button>
+
+<button class="locationBtn" onclick="visit('drift')">
+🧩 Continental Drift Lab
+</button>
+
+<button class="locationBtn" onclick="visit('final')">
+🚨 Final Mission
+</button>
+
+<div style="margin-top:20px;">
+<h3>Badges</h3>
+<div id="badges"></div>
+</div>
+
+</div>
+
+<div id="panel">
+
+<h2>Global Monitoring Hub</h2>
+
+<p id="story">
+Commander: Unusual tectonic activity has been detected around Earth.
+Investigate all major plate boundaries and collect evidence before a disaster occurs.
+</p>
+
+<div id="animation">
+<div id="leftPlate" class="plate"></div>
+<div id="rightPlate" class="plate"></div>
+
+<div id="volcano">🌋</div>
+<div id="earthquake">⚡</div>
+</div>
+
+<div id="questionArea"></div>
+<div id="message"></div>
+
+<div id="finalMission">
+<h3>FINAL EARTH STABILIZATION MISSION</h3>
+
+<p>
+A = Plates Sliding + Earthquakes
+</p>
+
+<p>
+B = Volcanoes + Trench + One Plate Sinking
+</p>
+
+<p>
+C = New Crust + Plates Separating
+</p>
+
+<button class="choice" onclick="finalCheck(true)">
+Match Completed
+</button>
+
+</div>
+
+</div>
+</div>
+
+<footer>
+Learning Targets:
+Identify plate boundaries • Explain earthquakes • Explain volcanoes • Understand continental drift
+</footer>
+
+<script>
+
+let xp = 0;
+
+let completed = {
+rift:false,
+subduction:false,
+fault:false,
+fossil:false,
+drift:false
+};
+
+const badges = [];
+
+function addXP(amount){
+
+xp += amount;
+
+if(xp > 100){
+xp = 100;
+}
+
+document.getElementById("xp").textContent = xp;
+
+document.getElementById("xpBar").style.width = xp + "%";
+
+if(xp >= 100){
+document.getElementById("message").innerHTML =
+"<span class='success'>🚨 Final Mission Unlocked!</span>";
+}
+}
+
+function awardBadge(name){
+
+if(!badges.includes(name)){
+
+badges.push(name);
+
+let badgeHTML = "";
+
+badges.forEach(b =>{
+badgeHTML += "<div class='badge'>🏆 "+b+"</div>";
+});
+
+document.getElementById("badges").innerHTML = badgeHTML;
+}
+}
+
+function answer(correct,badge){
+
+if(correct){
+
+document.getElementById("message").innerHTML =
+"<span class='success'>Correct! Evidence Collected!</span>";
+
+addXP(20);
+
+awardBadge(badge);
+
+}else{
+
+document.getElementById("message").innerHTML =
+"<span class='fail'>Try Again!</span>";
+}
+}
+
+function visit(location){
+
+document.getElementById("volcano").style.display="none";
+document.getElementById("earthquake").style.display="none";
+
+const q = document.getElementById("questionArea");
+
+if(location==="rift"){
+
+document.getElementById("story").innerHTML =
+"Plates are moving apart. Magma rises and creates new crust.";
+
+let left = document.getElementById("leftPlate");
+let right = document.getElementById("rightPlate");
+
+left.style.left="10px";
+right.style.right="10px";
+
+q.innerHTML=`
+<h3>What happens when plates move apart?</h3>
+
+<button class='choice' onclick="answer(false,'')">Mountains instantly form</button>
+<button class='choice' onclick="answer(true,'Divergent Expert')">New crust forms</button>
+<button class='choice' onclick="answer(false,'')">Plates stop moving</button>
+<button class='choice' onclick="answer(false,'')">Earthquakes never occur</button>
+`;
+
+}
+
+if(location==="subduction"){
+
+document.getElementById("story").innerHTML =
+"An oceanic plate is sinking beneath a continental plate.";
+
+document.getElementById("volcano").style.display="block";
+
+q.innerHTML=`
+<h3>Which plate is denser?</h3>
+
+<button class='choice' onclick="answer(true,'Volcano Investigator')">Oceanic Plate</button>
+<button class='choice' onclick="answer(false,'')">Continental Plate</button>
+`;
+}
+
+if(location==="fault"){
+
+document.getElementById("story").innerHTML =
+"Plates are sliding past each other.";
+
+document.getElementById("earthquake").style.display="block";
+document.getElementById("animation").classList.add("shaking");
+
+setTimeout(()=>{
+document.getElementById("animation").classList.remove("shaking");
+},2000);
+
+q.innerHTML=`
+<h3>Transform boundaries most commonly cause...</h3>
+
+<button class='choice' onclick="answer(false,'')">New Crust</button>
+<button class='choice' onclick="answer(true,'Earthquake Expert')">Earthquakes</button>
+<button class='choice' onclick="answer(false,'')">Fossils</button>
+<button class='choice' onclick="answer(false,'')">Ocean Creation Only</button>
+`;
+}
+
+if(location==="fossil"){
+
+document.getElementById("story").innerHTML =
+"Scientists discovered identical fossils on continents separated by oceans.";
+
+q.innerHTML=`
+<h3>Why are identical fossils found on different continents?</h3>
+
+<button class='choice' onclick="answer(true,'Fossil Hunter')">
+Continents were once connected
+</button>
+
+<button class='choice' onclick="answer(false,'')">
+Animals swam oceans
+</button>
+
+<button class='choice' onclick="answer(false,'')">
+Aliens moved them
+</button>
+
+<button class='choice' onclick="answer(false,'')">
+Volcanoes carried them
+</button>
+`;
+}
+
+if(location==="drift"){
+
+document.getElementById("story").innerHTML =
+"Alfred Wegener proposed Continental Drift.";
+
+q.innerHTML=`
+<h3>Pangaea was...</h3>
+
+<button class='choice' onclick="answer(true,'Drift Detective')">
+A supercontinent
+</button>
+
+<button class='choice' onclick="answer(false,'')">
+An ocean
+</button>
+
+<button class='choice' onclick="answer(false,'')">
+A volcano
+</button>
+
+<button class='choice' onclick="answer(false,'')">
+An earthquake zone
+</button>
+`;
+}
+
+if(location==="final"){
+
+if(xp < 100){
+
+document.getElementById("story").innerHTML =
+"Complete all missions first. You need 100 XP.";
+
+q.innerHTML="";
+
+}else{
+
+document.getElementById("story").innerHTML =
+"You have assembled enough evidence to stabilize Earth.";
+
+q.innerHTML="";
+
+document.getElementById("finalMission").style.display="block";
+}
+}
+}
+
+function finalCheck(){
+
+document.getElementById("message").innerHTML = `
+<h2 class='success'>
+🌎 EARTH SAVED!
+</h2>
+
+<h3>
+MASTER GEOLOGIST ACHIEVEMENT UNLOCKED
+</h3>
+
+<p>
+You identified all three major plate boundaries and
+used evidence to explain Earth's changing surface.
+</p>
+`;
+
+awardBadge("Master Geologist");
+}
+
+</script>
+
+</body>
+</html>
