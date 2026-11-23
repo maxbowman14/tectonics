@@ -352,7 +352,7 @@ const q = document.getElementById("questionArea");
 if(location==="rift"){
 
 document.getElementById("story").innerHTML =
-"Plates are moving apart. Magma rises and creates new crust.";
+"Watch the following video. Plates are moving apart. Magma rises and creates new crust.";
 
 let left = document.getElementById("leftPlate");
 let right = document.getElementById("rightPlate");
@@ -361,14 +361,36 @@ left.style.left="10px";
 right.style.right="10px";
 
 q.innerHTML=`
+<div style="margin-bottom:15px;">
+    <iframe
+        width="100%"
+        height="315"
+        src="https://www.youtube.com/embed/VIDEO_ID"
+        title="Plate Tectonics Video"
+        frameborder="0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowfullscreen>
+    </iframe>
+</div>
+
 <h3>What happens when plates move apart?</h3>
 
-<button class='choice' onclick="answer(false,'')">Mountains instantly form</button>
-<button class='choice' onclick="answer(true,'Divergent Expert')">New crust forms</button>
-<button class='choice' onclick="answer(false,'')">Plates stop moving</button>
-<button class='choice' onclick="answer(false,'')">Earthquakes never occur</button>
-`;
+<button class='choice' onclick="answer(false,'')">
+Mountains instantly form
+</button>
 
+<button class='choice' onclick="answer(true,'Divergent Expert')">
+New crust forms
+</button>
+
+<button class='choice' onclick="answer(false,'')">
+Plates stop moving
+</button>
+
+<button class='choice' onclick="answer(false,'')">
+Earthquakes never occur
+</button>
+`;
 }
 
 if(location==="subduction"){
