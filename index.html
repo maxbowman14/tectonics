@@ -196,7 +196,7 @@ XP: <span id="xp">0</span>/100
 
 <div id="map">
 
-<button class="locationBtn" onclick="visit('rift')">
+<button class="locationBtn" onclick="visit('Explorer Ridge')">
 🌊 Rift Zone (Divergent)
 </button>
 
@@ -329,7 +329,7 @@ function answer(correct,badge){
 if(correct){
 
 document.getElementById("message").innerHTML =
-"<span class='success'>Correct! Evidence Collected!</span>";
+"<span class='success'>Correct! `Evidence Collected!</span>";
 
 addXP(20);
 
@@ -352,7 +352,7 @@ const q = document.getElementById("questionArea");
 if(location==="rift"){
 
     document.getElementById("story").innerHTML =
-    "Watch the following video. Plates are moving apart. Magma rises and creates new crust.";
+    "Watch the following video. ";
 
     let left = document.getElementById("leftPlate");
     let right = document.getElementById("rightPlate");
@@ -373,7 +373,7 @@ if(location==="rift"){
         </iframe>
     </div>
 
-    <h3>What happens when plates move apart?</h3>
+    <h3>You are deep underwater. Around you </h3>
 
     <button class='choice' onclick="answer(false,'')">
         Mountains instantly form
@@ -456,7 +456,7 @@ Volcanoes carried them
 `;
 }
 
-if(location==="drift"){
+if(location==="Explorer Ridge"){
 
 document.getElementById("story").innerHTML =
 "Alfred Wegener proposed Continental Drift.";
